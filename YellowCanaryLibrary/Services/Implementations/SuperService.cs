@@ -87,7 +87,7 @@ namespace YellowCanaryLibrary.Services.Implementations
 
                 var disbursementsGroupedByQuarterAndYear = employee.Disbursements.GroupBy(d => new
                 {
-                    Quarter = ConvertDateTimeToQuarter(d.PaymentMade),
+                    Quarter = ConvertDisbursementPaymentDateToQuarter(d.PaymentMade),
                     Year = d.PaymentMade.Year
                 });
 
@@ -123,6 +123,29 @@ namespace YellowCanaryLibrary.Services.Implementations
                 }
 
                 employee.SuperSummaries.AddRange(employeesSuperSummaryDictionary.Values.ToList());
+            }
+        }
+
+        private Quarter ConvertDisbursementPaymentDateToQuarter(DateTime paymentMade)
+        {
+            int month = paymentMade.Month;
+            int day = paymentMade.Day;
+
+            if ((month == 1 && day >= 29) || month == 2 || month == 3 || (month == 4 && day <= 28))
+            {
+                return Quarter.first;
+            }
+            else if ((month == 4 && day >= 29) || month == 5 || month == 6 || (month == 7 && day <= 28))
+            {
+                return Quarter.second;
+            }
+            else if ((month == 7 && day >= 29) || month == 8 || month == 9 || (month == 10 && day <= 28))
+            {
+                return Quarter.third;
+            }
+            else // October 29th - December 28th and also includes December 29th
+            {
+                return Quarter.fourth;
             }
         }
 
